@@ -1,0 +1,9 @@
+.lightning_studio/
+.cursor-server
+.vscode-server
+.windsurf-server
+settings.json
+this_studio.iml
+
+.venv
+.env
