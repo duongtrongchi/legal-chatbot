@@ -1,7 +1,7 @@
 import os
 import yaml
 from pathlib import Path
-from typing import Tuple, Optional, Any
+from typing import Tuple, Optional, Any, Type
 from dotenv import load_dotenv
 from loguru import logger
 
@@ -33,6 +33,12 @@ def load_yaml_config(config_file: Optional[str] = None) -> dict:
         raise yaml.YAMLError(f"Failed to parse YAML file {config_path}: {e}")
 
 
+def add_specical_token(tokenizer, special_token: list):
+    for i in special_token:
+        tokenizer.add_tokens(i)
+    return tokenizer
+
+
 def setup_model(config_file: Optional[str] = None) -> Tuple[Any, Any]:
     """Setup and load the language model with tokenizer."""
     hf_token = os.getenv("HF_TOKEN")
@@ -54,17 +60,32 @@ def setup_model(config_file: Optional[str] = None) -> Tuple[Any, Any]:
         token=hf_token,
     )
 
+    tokenizer = add_specical_token(tokenizer, ['<metadata>', "</metadata>"])
+
     return model, tokenizer
 
 
-def load_hyperparameters(config_file: Optional[str] = None) -> HyperparameterConfig:
-    """Load hyperparameters from configuration file."""
+def load_hyperparameters(
+    config_file: Optional[str] = None,
+    config_class: Type[HyperparameterConfig] = HyperparameterConfig
+) -> HyperparameterConfig:
+    """
+    Load hyperparameters from a YAML config using a specified config class.
+    Default is HyperparameterConfig, but can pass subclass (e.g., LlamaHyperparameterConfig).
+    """
+    if config_file is None:
+        print(f"No config file provided. Using default {config_class.__name__} settings.")
+        return config_class()
+
     yaml_config = load_yaml_config(config_file)
-    
+
+    if not isinstance(yaml_config, dict):
+        raise ValueError("Configuration file content must be a dictionary at the top level.")
+
     if 'hyperparameters' not in yaml_config:
-        raise KeyError("'hyperparameters' section not found in configuration file")
-    
-    return HyperparameterConfig(**yaml_config['hyperparameters'])
+        raise KeyError("'hyperparameters' section not found in configuration file.")
+
+    return config_class(**yaml_config['hyperparameters'])
 
 
 def setup(config_file: Optional[str] = None) -> Tuple[Any, Any]:
@@ -82,3 +103,12 @@ def log_hyperparameters(args, message="Hyperparameters:"):
     logger.info(message)
     for key, value in args.__dict__.items():
         logger.info("  {}: {}", key, value)
+
+
+def format_metadata(metadata: dict) -> str:
+    s = "<metadata>\n"
+    for k, v in metadata.items():
+        s += f"{k}: {v}\n"
+    s += "</metadata>"
+    return s
+

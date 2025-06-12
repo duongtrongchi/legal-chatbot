@@ -1,3 +1,4 @@
+import os
 from loguru import logger
 from dotenv import load_dotenv
 load_dotenv()
@@ -9,11 +10,11 @@ from unsloth import (
 )
 
 from src.utils import setup_model, log_hyperparameters
-from src.settings import HyperparameterConfig
+from src.settings import QwenHyperparameterConfig
 from src.processing import load_dataset_from_hub
 
 
-args = HyperparameterConfig()
+args = QwenHyperparameterConfig()
 dataset = load_dataset_from_hub("DuongTrongChi/luatvn-split-v_0.2.0", "article").select(range(1_000))
 model, tokenizer = setup_model()
 log_hyperparameters(args)
@@ -30,3 +31,6 @@ trainer = UnslothTrainer(
 )
 
 trainer_stats = trainer.train()
+
+model.push_to_hub("DuongTrongChi/legal-pretrain", token=os.getenv("HF_TOKEN"))
+tokenizer.push_to_hub("DuongTrongChi/legal-pretrain", token=os.getenv("HF_TOKEN"))
