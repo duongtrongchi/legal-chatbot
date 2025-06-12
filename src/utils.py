@@ -1,0 +1,84 @@
+import os
+import yaml
+from pathlib import Path
+from typing import Tuple, Optional, Any
+from dotenv import load_dotenv
+from loguru import logger
+
+from unsloth import FastLanguageModel
+from datasets import load_dataset
+
+
+from src.settings import (
+    SetupModelConfig, 
+    HyperparameterConfig
+)
+
+
+load_dotenv()
+DEFAULT_CONFIG_PATH = Path("./configs/training.yaml")
+
+
+def load_yaml_config(config_file: Optional[str] = None) -> dict:
+    """Load and parse YAML configuration file."""
+    config_path = Path(config_file) if config_file else DEFAULT_CONFIG_PATH
+    
+    if not config_path.exists():
+        raise FileNotFoundError(f"Configuration file not found: {config_path}")
+    
+    try:
+        with open(config_path, "r", encoding="utf-8") as f:
+            return yaml.safe_load(f)
+    except yaml.YAMLError as e:
+        raise yaml.YAMLError(f"Failed to parse YAML file {config_path}: {e}")
+
+
+def setup_model(config_file: Optional[str] = None) -> Tuple[Any, Any]:
+    """Setup and load the language model with tokenizer."""
+    hf_token = os.getenv("HF_TOKEN")
+    if not hf_token:
+        raise ValueError("HF_TOKEN environment variable is required but not set")
+    
+    yaml_config = load_yaml_config(config_file)
+    
+    if 'setup_model' not in yaml_config:
+        raise KeyError("'setup_model' section not found in configuration file")
+    
+    training_config = SetupModelConfig(**yaml_config['setup_model'])
+
+    model, tokenizer = FastLanguageModel.from_pretrained(
+        model_name=training_config.model_id,
+        max_seq_length=training_config.max_seq_length,
+        dtype=training_config.dtype,
+        full_finetuning=training_config.full_finetuning,
+        token=hf_token,
+    )
+
+    return model, tokenizer
+
+
+def load_hyperparameters(config_file: Optional[str] = None) -> HyperparameterConfig:
+    """Load hyperparameters from configuration file."""
+    yaml_config = load_yaml_config(config_file)
+    
+    if 'hyperparameters' not in yaml_config:
+        raise KeyError("'hyperparameters' section not found in configuration file")
+    
+    return HyperparameterConfig(**yaml_config['hyperparameters'])
+
+
+def setup(config_file: Optional[str] = None) -> Tuple[Any, Any]:
+    """Legacy setup function. Use setup_model() instead."""
+    import warnings
+    warnings.warn(
+        "setup() is deprecated, use setup_model() instead", 
+        DeprecationWarning, 
+        stacklevel=2
+    )
+    return setup_model(config_file)
+
+
+def log_hyperparameters(args, message="Hyperparameters:"):
+    logger.info(message)
+    for key, value in args.__dict__.items():
+        logger.info("  {}: {}", key, value)

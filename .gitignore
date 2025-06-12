@@ -7,3 +7,11 @@ this_studio.iml
 
 .venv
 .env
+
+
+outputs/
+
+__pycache__/
+unsloth_compiled_cache/
+
+test.ipynb

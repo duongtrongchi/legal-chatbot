@@ -1,0 +1,20 @@
+setup_model:
+  model_id: "Qwen/Qwen3-1.7B"
+  max_seq_length: 1024
+  dtype: null
+  full_finetuning: true
+
+hyperparameters:
+  per_device_train_batch_size: 1
+  gradient_accumulation_steps: 8
+  max_steps: 120
+  warmup_steps: 10
+  learning_rate: 1e-5
+  embedding_learning_rate: 1e-5
+  logging_steps: 1
+  optim: "adamw_8bit"
+  weight_decay: 0.01
+  lr_scheduler_type: "linear"
+  seed: 42
+  output_dir: "outputs"
+  report_to: "none"
