@@ -21,6 +21,12 @@ jobs:
       - name: Install uv (fast Python installer)
         run: pip install uv
 
+      - name: Create virtual environment
+        run: uv venv .venv
+
+      - name: Activate virtual environment
+        run: echo "VIRTUAL_ENV=.venv" >> $GITHUB_ENV && echo "$GITHUB_WORKSPACE/.venv/bin" >> $GITHUB_PATH
+
       - name: Install dependencies with uv
         run: |
           uv pip install --all-extras --requirement pyproject.toml
