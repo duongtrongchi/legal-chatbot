@@ -24,7 +24,7 @@ trainer = UnslothTrainer(
     tokenizer = tokenizer,
     train_dataset = dataset,
     dataset_text_field = "text",
-    max_seq_length = 1024,
+    max_seq_length = 4096,
     dataset_num_proc = 2,
     args = UnslothTrainingArguments(**args.__dict__),
 )

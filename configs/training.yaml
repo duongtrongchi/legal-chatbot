@@ -1,6 +1,6 @@
 setup_model:
   model_id: "Qwen/Qwen3-1.7B"
-  max_seq_length: 1024
+  max_seq_length: 4096
   dtype: null
   full_finetuning: true
 
