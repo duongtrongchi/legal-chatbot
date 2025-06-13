@@ -24,4 +24,10 @@ def load_dataset_from_hub(dataset_id: str, text_field: str) -> Dataset:
 
     return dataset
 
+def etl_pipeline(dataset_id) -> Dataset:
+    ds = load_dataset("DuongTrongChi/luatvn-split-v_0.2.0", "split", split="train")
+
+
+    
+
 

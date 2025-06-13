@@ -19,7 +19,7 @@ args = QwenHyperparameterConfig()
 unsloth_trainer_config = load_yaml_config("./configs/training.yaml")["unsloth_trainer_config"]
 unsloth_trainer_config = UnslothTrainerConfig(**unsloth_trainer_config)
 
-dataset = load_dataset_from_hub("DuongTrongChi/luatvn-split-v_0.2.0", "article").select(range(1_000))
+dataset = load_dataset_from_hub("DuongTrongChi/legal-pretrain", "processed").select(range(1_000))
 model, tokenizer = setup_model()
 log_hyperparameters(args)
 
