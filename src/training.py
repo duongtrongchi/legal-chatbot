@@ -18,15 +18,17 @@ from src.settings import QwenHyperparameterConfig, UnslothTrainerConfig
 # from src.processing import load_dataset_from_hub
 
 
-comet_ml.login(project_name="legal-llm", api_key=os.getenv("COMET_API_KEY"))
+comet_ml.login(project_name="legal-chatbot", api_key=os.getenv("COMET_API_KEY"))
 
 os.environ["COMET_LOG_ASSETS"] = "True"
 
-args = QwenHyperparameterConfig()
+args_config = load_yaml_config("./configs/training.yaml")["hyperparameters"]
+args = QwenHyperparameterConfig(**args_config)
+
 unsloth_trainer_config = load_yaml_config("./configs/training.yaml")["unsloth_trainer_config"]
 unsloth_trainer_config = UnslothTrainerConfig(**unsloth_trainer_config)
 
-dataset = load_dataset("DuongTrongChi/legal-pretrain", "processed", token=os.getenv("HF_TOKEN"), split="train")
+dataset = load_dataset("DuongTrongChi/legal-pretrain", "processed", token=os.getenv("HF_TOKEN"), split="train").select(range(30_000))
 model, tokenizer = setup_model()
 log_hyperparameters(args)
 

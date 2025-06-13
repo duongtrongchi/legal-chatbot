@@ -5,7 +5,7 @@ setup_model:
   full_finetuning: true
 
 hyperparameters:
-  per_device_train_batch_size: 16
+  per_device_train_batch_size: 32
   gradient_accumulation_steps: 4
   # max_steps: 120
   warmup_steps: 10
@@ -24,4 +24,4 @@ hyperparameters:
 unsloth_trainer_config:
   dataset_text_field: "text"
   max_seq_length: 4096
-  dataset_num_proc: 2
+  dataset_num_proc: 4

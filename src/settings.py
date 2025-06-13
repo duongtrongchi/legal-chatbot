@@ -25,7 +25,7 @@ class SetupModelConfig(BaseConfig):
 
 class HyperparameterConfig(BaseConfig):
     """Training hyperparameters."""
-    per_device_train_batch_size: int = 1
+    per_device_train_batch_size: int = 8
     gradient_accumulation_steps: int = 8
     num_train_epochs: int = 1
     warmup_steps: int = 10
@@ -58,6 +58,6 @@ class LlamaHyperparameterConfig(HyperparameterConfig):
 
 class QwenHyperparameterConfig(HyperparameterConfig):
     """Overrides for Qwen models."""
-    learning_rate: float = 2e-5
+    learning_rate: float = 1e-5
     warmup_steps: int = 20
     lr_scheduler_type: str = "cosine"
