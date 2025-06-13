@@ -8,25 +8,31 @@ from unsloth import (
     UnslothTrainer, 
     UnslothTrainingArguments
 )
+from transformers import DataCollatorForSeq2Seq
 
-from src.utils import setup_model, log_hyperparameters
-from src.settings import QwenHyperparameterConfig
+from src.utils import setup_model, log_hyperparameters, load_yaml_config
+from src.settings import QwenHyperparameterConfig, UnslothTrainerConfig
 from src.processing import load_dataset_from_hub
 
 
 args = QwenHyperparameterConfig()
+unsloth_trainer_config = load_yaml_config("./configs/training.yaml")["unsloth_trainer_config"]
+unsloth_trainer_config = UnslothTrainerConfig(**unsloth_trainer_config)
+
 dataset = load_dataset_from_hub("DuongTrongChi/luatvn-split-v_0.2.0", "article").select(range(1_000))
 model, tokenizer = setup_model()
 log_hyperparameters(args)
 
+data_collator = DataCollatorForSeq2Seq(tokenizer=tokenizer, model=model)
 
 trainer = UnslothTrainer(
     model = model,
     tokenizer = tokenizer,
     train_dataset = dataset,
-    dataset_text_field = "text",
-    max_seq_length = 4096,
-    dataset_num_proc = 2,
+    data_collator=data_collator,
+    dataset_text_field = unsloth_trainer_config.dataset_text_field,
+    max_seq_length = unsloth_trainer_config.max_seq_length,
+    dataset_num_proc = unsloth_trainer_config.dataset_num_proc,
     args = UnslothTrainingArguments(**args.__dict__),
 )
 

@@ -18,3 +18,9 @@ hyperparameters:
   seed: 42
   output_dir: "outputs"
   report_to: "none"
+
+
+unsloth_trainer_config:
+  dataset_text_field: "text"
+  max_seq_length: 4096
+  dataset_num_proc: 2

@@ -42,6 +42,12 @@ class HyperparameterConfig(BaseConfig):
     report_to: str = "none"
 
 
+class UnslothTrainerConfig(BaseConfig):
+    dataset_text_field: str = "text"
+    max_seq_length: int = 4096
+    dataset_num_proc: int = 2
+
+
 # === Optional: Subclassing for specific models ===
 
 class LlamaHyperparameterConfig(HyperparameterConfig):
