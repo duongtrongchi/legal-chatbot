@@ -1,4 +1,5 @@
 .lightning_studio/
+.ipynb_checkpoints/
 .cursor-server
 .vscode-server
 .windsurf-server

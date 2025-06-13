@@ -27,7 +27,7 @@ class HyperparameterConfig(BaseConfig):
     """Training hyperparameters."""
     per_device_train_batch_size: int = 1
     gradient_accumulation_steps: int = 8
-    max_steps: int = 120
+    num_train_epochs: int = 1
     warmup_steps: int = 10
     learning_rate: float = 1e-5
     embedding_learning_rate: float = 1e-5
