@@ -8,7 +8,7 @@ from unsloth import (
     UnslothTrainer, 
     UnslothTrainingArguments
 )
-from transformers import DataCollatorForSeq2Seq
+from transformers import DataCollatorForLanguageModeling
 
 from src.utils import setup_model, log_hyperparameters, load_yaml_config
 from src.settings import QwenHyperparameterConfig, UnslothTrainerConfig
@@ -23,7 +23,7 @@ dataset = load_dataset_from_hub("DuongTrongChi/luatvn-split-v_0.2.0", "article")
 model, tokenizer = setup_model()
 log_hyperparameters(args)
 
-data_collator = DataCollatorForSeq2Seq(tokenizer=tokenizer, model=model)
+data_collator = DataCollatorForLanguageModeling(tokenizer=tokenizer, model=model)
 
 trainer = UnslothTrainer(
     model = model,
